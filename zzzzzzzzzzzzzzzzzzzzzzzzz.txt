@@ -1,0 +1,7 @@
+ php artisan make:controller Auth\LoginController
+ php artisan make:controller Auth\RegisterController
+
+
+
+ php artisan make:request Auth\RegisterRequest
+ php artisan make:request Auth\LoginRequest
