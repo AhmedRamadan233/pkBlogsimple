@@ -9,26 +9,28 @@ class PostController extends Controller
 {
     public function index()
     {
-        return view('index');
+        $posts = Post::paginate(10);
+        return view('pages.posts.index', compact('posts'));
     }
-
-
-
     public function create()
     {
         $posts = Post::all();
-        return view('create',compact('posts'));
+        return view('pages.posts.create', compact('posts'));
     }
 
     public function edit($id)
     {
         $post = Post::findOrFail($id);
-        return view('edit',compact('post'));
+        return view('pages.posts.edit', compact('post'));
     }
 
 
     public function store(Request $request)
     {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'descriptions' => 'required|string',
+        ]);
         $post = new Post();
         $post->title = $request->input('title');
         $post->descriptions = $request->input('descriptions');
@@ -38,22 +40,27 @@ class PostController extends Controller
     }
 
 
-    public function update(Request $request ,$id)
+    public function update(Request $request, $id)
     {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'descriptions' => 'required|string',
+        ]);
         $post = Post::findOrFail($id);
         $post->title = $request->input('title');
         $post->descriptions = $request->input('descriptions');
-        $post->update();
-
-
+        $post->save();
         return redirect()->route('post.index');
     }
 
-
-
-    public function delete(Request $request ,$id)
+    public function show($id)
     {
-        $post =Post::findOrFail($id);
+        $post = Post::findOrFail($id);
+        return view('pages.posts.show', ['post' => $post]);
+    }
+    public function delete(Request $request, $id)
+    {
+        $post = Post::findOrFail($id);
 
         $post->delete();
 

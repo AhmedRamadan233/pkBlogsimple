@@ -17,26 +17,25 @@ class LoginController extends Controller
     }
     public function login(LoginRequest $request)
     {
-        $ValidatedData = $request->validated();
+        $validatedData = $request->validated();
 
-        $user = User::where('email' , $ValidatedData['email']);
-        $password = $user->password = Hash::make($ValidatedData['password']);
+        $user = User::where('email', $validatedData['email'])->first();
 
-       if(($user && $password)->first())
-       {
+        if ($user && Hash::check($validatedData['password'], $user->password)) {
+
             Auth::login($user);
-       }
-        else{
-            return redirect()->back();
+
+            return redirect()->route('post.index');
+        } else {
+            return redirect()->back()->withErrors(['login' => 'Invalid credentials.']);
         }
     }
 
 
 
-
-public function logout(Request $request)
-{
-    Auth::logout();
-    return redirect()->route('Auth.login');
-}
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        return redirect()->route('login');
+    }
 }
